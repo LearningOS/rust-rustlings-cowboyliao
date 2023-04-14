@@ -17,16 +17,17 @@
 // one is a lot shorter!
 // Execute `rustlings hint errors2` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
-
 use std::num::ParseIntError;
 
 pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
     let processing_fee = 1;
     let cost_per_item = 5;
-    let qty = item_quantity.parse::<i32>();
-
-    Ok(qty * cost_per_item + processing_fee)
+    // let qty = item_quantity.parse::<i32>()?;
+    // Ok(qty * cost_per_item + processing_fee)
+    match item_quantity.parse::<i32>() {
+        Ok(qty) => Ok(qty * cost_per_item + processing_fee),
+        Err(e) => Err(e),
+    }
 }
 
 #[cfg(test)]
@@ -46,3 +47,11 @@ mod tests {
         );
     }
 }
+
+// One way to handle this is using a `match` statement on
+// `item_quantity.parse::<i32>()` where the cases are `Ok(something)` and
+// `Err(something)`. This pattern is very common in Rust, though, so there's
+// a `?` operator that does pretty much what you would make that match statement
+// do for you! Take a look at this section of the Error Handling chapter:
+// https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator
+// and give it a try!
