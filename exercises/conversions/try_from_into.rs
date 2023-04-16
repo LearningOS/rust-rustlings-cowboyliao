@@ -23,7 +23,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -38,6 +37,14 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        if tuple.0<0||tuple.1<0||tuple.2<0{
+            return Err(IntoColorError::IntConversion);
+        } 
+        if tuple.0>256||tuple.1>256||tuple.2>256{
+            return Err(IntoColorError::IntConversion);
+        } else {
+            return Ok(Color{red:tuple.0 as u8, green:tuple.1 as u8,blue:tuple.2 as u8,});
+        }
     }
 }
 
@@ -45,6 +52,9 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let [r,g,b]=arr;
+        (r,g,b).try_into()
+
     }
 }
 
@@ -52,6 +62,10 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        match slice{
+            [r,g,b]=>(*r,*g,*b).try_into(),
+            _=>Err(IntoColorError::BadLen)
+        }
     }
 }
 
@@ -76,7 +90,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    // Tuple implementation
     #[test]
     fn test_tuple_out_of_range_positive() {
         assert_eq!(
@@ -111,6 +125,7 @@ mod tests {
             }
         );
     }
+    // Arry implementation
     #[test]
     fn test_array_out_of_range_positive() {
         let c: Result<Color, _> = [1000, 10000, 256].try_into();
@@ -139,6 +154,7 @@ mod tests {
             }
         );
     }
+    // Slice implementation
     #[test]
     fn test_slice_out_of_range_positive() {
         let arr = [10000, 256, 1000];
